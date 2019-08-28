@@ -15,12 +15,12 @@ export class V3WebsocketClient extends EventEmitter {
     this.websocketUri = websocketURI;
   }
 
-  connect() {
+  connect(options = {}) {
     if (this.socket) {
       this.socket.close();
     }
 
-    this.socket = new WebSocket(this.websocketUri);
+    this.socket = new WebSocket(this.websocketUri, options);
     console.log(`Connecting to ${this.websocketUri}`);
 
     this.socket.on('open', () => this.onOpen());
