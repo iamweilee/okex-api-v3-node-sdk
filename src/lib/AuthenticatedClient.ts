@@ -1,17 +1,18 @@
 // tslint:disable:variable-name
 
-import axios, { AxiosInstance } from 'axios';
-import * as crypto from 'crypto';
+import axios, { AxiosInstance } from 'axios-https-proxy-fix';
+// import * as crypto from 'crypto';
 import * as querystring from 'querystring';
+const CryptoJS = require('crypto-js/crypto-js');
 
-export function AuthenticatedClient(
-  key: string,
-  secret: string,
-  passphrase: string,
+export function AuthenticatedClient({
+  key= '' ,
+  secret = '',
+  passphrase = '',
   apiUri = 'https://www.okex.com',
   timeout = 3000,
   axiosConfig = {}
-): any {
+} = {}): any {
   const axiosInstance: AxiosInstance = axios.create({
     baseURL: apiUri,
     timeout,
@@ -28,8 +29,9 @@ export function AuthenticatedClient(
     // tslint:disable:no-expression-statement
     const timestamp = Date.now() / 1000;
     const what = timestamp + method.toUpperCase() + path + (options.body || '');
-    const hmac = crypto.createHmac('sha256', secret);
-    const signature = hmac.update(what).digest('base64');
+    // const hmac = crypto.createHmac('sha256', secret);
+    // const signature = hmac.update(what).digest('base64');
+    const signature = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(what, secret));
     return {
       key,
       passphrase,

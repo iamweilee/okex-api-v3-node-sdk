@@ -2,15 +2,16 @@
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
 import pako from 'pako';
-import crypto from 'crypto';
+// import crypto from 'crypto';
 import crc32 from 'crc-32';
+const CryptoJS = require('crypto-js/crypto-js');
 
 export class V3WebsocketClient extends EventEmitter {
   private websocketUri: string;
   private socket?: WebSocket;
   private interval?: NodeJS.Timeout | null;
 
-  constructor(websocketURI = 'wss://real.okex.com:10442/ws/v3') {
+  constructor(websocketURI = 'wss://real.okex.com:8443/ws/v3') {
     super();
     this.websocketUri = websocketURI;
   }
@@ -31,14 +32,15 @@ export class V3WebsocketClient extends EventEmitter {
   login(apiKey: string, apiSecret: string, passphrase: string) {
     const timestamp = Date.now() / 1000;
     const str = timestamp + 'GET/users/self/verify';
-    const hmac = crypto.createHmac('sha256', apiSecret);
+    // const hmac = crypto.createHmac('sha256', apiSecret);
     const request = JSON.stringify({
       op: 'login',
       args: [
         apiKey,
         passphrase,
         timestamp.toString(),
-        hmac.update(str).digest('base64')
+        CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(str, apiSecret))
+        // hmac.update(str).digest('base64')
       ]
     });
     this.socket!.send(request);

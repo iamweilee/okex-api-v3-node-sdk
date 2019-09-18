@@ -1,13 +1,13 @@
 // tslint:disable:variable-name
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios-https-proxy-fix';
 import * as querystring from 'querystring';
 
-export function PublicClient(
+export function PublicClient({
   apiUri = 'https://www.okex.com',
   timeout = 3000,
   axiosConfig = {}
-): any {
+} = {}): any {
   const axiosInstance: AxiosInstance = axios.create({
     baseURL: apiUri,
     timeout,
